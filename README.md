@@ -4,7 +4,7 @@
 
 A locally-running Retrieval Augmented Generation (RAG) system that enables document analysis and question answering using DeepSeek.
 
-![App Screenshot](ragapp.png)
+<img src="ragapp.png" alt="The App" width="300" height="200">
 
 ## Features
 
@@ -16,7 +16,7 @@ A locally-running Retrieval Augmented Generation (RAG) system that enables docum
 - **Cross-document Search Capabilities**
 
 ## Architecture
-![Architecture Screenshot](architecture.png)
+<img src="architecture.png" alt="Architecture" width="300" height="200">
 
 ## Usage
 
