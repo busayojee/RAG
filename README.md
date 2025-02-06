@@ -3,8 +3,9 @@
 [![Python Version](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/)
 
 A locally-running Retrieval Augmented Generation (RAG) system that enables document analysis and question answering using DeepSeek.
-
-<img src="ragapp.png" alt="The App" width="400" style="display: block; margin: auto;">
+<div style="text-align: center;">
+<img src="ragapp.png" alt="The App" width="400">
+</div>
 
 ## Features
 
@@ -16,7 +17,9 @@ A locally-running Retrieval Augmented Generation (RAG) system that enables docum
 - **Cross-document Search Capabilities**
 
 ## Architecture
-<img src="architecture.png" alt="Architecture" width="400" style="display: block; margin: auto;">
+<div style="text-align: center;">
+<img src="architecture.png" alt="Architecture" width="400">
+</div>
 
 ## Usage
 
@@ -29,34 +32,34 @@ To install and use locally, the following steps could be followed
 
 ### Installation
 
-1. **Clone repository**:
+#### Clone repository
 
 ```bash
 git clone https://github.com/busayojee/RAG.git
 ```
 
-2. **Create virtual environment**:
+#### Create virtual environment
 
 ```bash
 python -m venv venv
 source venv/bin/activate 
 ```
 
-3. **Install dependencies**:
+#### Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-4. **Update ModelFile to include deepseek-r1 path**
+- **Update ModelFile to include deepseek-r1 path**
 
-5. **Add to Ollama**:
+#### Add to Ollama
 
 ```bash
 ollama create deepseek-1.5 -f Modelfile
 ```
 
-6. **Start the application**:
+#### Start the application
 
 ```bash
 streamlit run main.py
