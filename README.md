@@ -24,8 +24,8 @@ To install and use locally, the following steps could be followed
 
 ### Prerequisites
 
-1. **Ollama Installation**: ![Ollama install](https://ollama.com/download)
-2. **Deepseek-r1 Installation**: ![Deepseek download](https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B)
+1. **Ollama Installation**: [Ollama install](https://ollama.com/download)
+2. **Deepseek-r1 Installation**: [Deepseek download](https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B)
 
 ### Installation
 
