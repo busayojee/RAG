@@ -2,3 +2,6 @@
 /chroma_db
 /documents
 .DS_Store
+*/__pycache__
+.*/
+*.pkl

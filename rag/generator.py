@@ -1,17 +1,20 @@
-import requests
 import re
+import ollama
 
 class Generator:
-    def __init__(self, model_url="http://localhost:1234/v1"):
-        self.model_url = model_url
+    def __init__(self, model="deepseek-1.5"):
+        self.model = model
         self.headers = {"Content-Type": "application/json"}
-        self.prompt_template = """
-        Answer the question based only on the following context:
+        self.prompt_template = """ If the user input is a greeting (e.g., ‘Hi’, ‘Hello’, ‘How are you?’, ‘What’s up?’, ‘Bawo ni?’) take it as a direct greeting, 
+        respond with a natural and friendly greeting. Otherwise, answer the question based only on the following context:
         {context}
         
         Question: {question}
         
-        Answer in clear, concise English. If you don't know the answer, say 'I don't know'. Answer must be from only the context and not even from your own understanding of the question."""
+        Answer in clear, concise English. If you don't know the answer, say 'I don't know'. 
+        
+        Given the context information above I want you to think step by step to answer the query in a crisp manner, incase case you don't know the answer say 'I don't know!'
+        """
     
     def _format_prompt(self, context, question):
         joined_context = "\n\n".join(context)
@@ -34,21 +37,12 @@ class Generator:
 
     def generate(self, query, context):
         full_prompt = self._format_prompt(context, query)     
-        payload = {
-            "prompt": full_prompt,
-            "temperature": 0.7,
-            "max_tokens": 500
-        }   
         try:
-            response = requests.post(
-                f"{self.model_url}/completions",
-                json=payload,
-                headers=self.headers
-            )
-            response.raise_for_status()
-            raw = response.json()["choices"][0]["text"].strip()
+            response = ollama.chat(model=self.model, messages=[{"role": "user", "content": full_prompt}])
+            raw = response["message"]["content"].strip()
+            print(raw)
             return self._extract_answer(raw)
-        
+
         except Exception as e:
             print(f"Generation error: {str(e)}")
             return "Sorry, I encountered an error generating the response."

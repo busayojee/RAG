@@ -6,16 +6,19 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 
 class IndexerRetriever:
-    def __init__(self, document_folder, persist_directory="chroma_db"):
+    def __init__(self, document_folder="documents", persist_directory="chroma_db"):
         self.path = document_folder
         self.persist_directory = persist_directory
         self.embedding_model = "sentence-transformers/all-mpnet-base-v2"
 
         # For chunking (performance issues without chunking)
-        self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=100, chunk_overlap=50, length_function=len, add_start_index=True)
+        self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=256, length_function=len, add_start_index=True)
         self.embedding_function = HuggingFaceEmbeddings(model_name=self.embedding_model, model_kwargs={'device':'cpu'}, encode_kwargs={'normalize_embeddings': False})
         
         # Initialize or load ChromaDB
+        self._initialize_vector_db()
+
+    def _initialize_vector_db(self):
         if os.path.exists(self.persist_directory):
             self.vector_db = Chroma(
                 persist_directory=self.persist_directory,
@@ -23,34 +26,41 @@ class IndexerRetriever:
             )
         else:
             self.vector_db = self._create_vector_db()
-    def _load_documents(self, file_paths = None):
+            
+    def _load_documents(self, file_paths=None):
         docs = []
-        process_files = file_paths or [os.path.join(self.path, f) for f in os.listdir(self.path)]
+        process_files = file_paths or [os.path.join(self.path, f) for f in os.listdir(self.path)]   
         for file in process_files:
             if not os.path.isfile(file):
-                continue
-            try: 
-                last_modified = os.path.getmtime(file)
-                file_name = os.path.basename(file)
-                if file.endswith(".pdf"):
-                    loader = PyPDFLoader(file)
-                elif file.endswith(".docx"):
-                    loader = Docx2txtLoader(file)
-                else:
-                    loader = TextLoader(file)
+                continue       
+            try:
+                loader = self._get_loader(file)
                 loaded_docs = loader.load()
-
-                for doc in loaded_docs:
-                    doc.metadata.update({
-                        "source": file,
-                        "file_name": file_name,
-                        "last_modified": last_modified
-                    })
-                
-                docs.extend(loaded_docs)
+                self._add_metadata(loaded_docs, file)
+                docs.extend(loaded_docs)          
             except Exception as e:
                 print(f"Failed to load {file}: {str(e)}")
+                continue          
         return docs
+
+    def _get_loader(self, file):
+        if file.endswith(".pdf"):
+            return PyPDFLoader(file)
+        elif file.endswith(".docx"):
+            return Docx2txtLoader(file)
+        elif file.endswith(".txt"):
+            return TextLoader(file)
+        raise ValueError(f"Unsupported file format: {file}")
+
+    def _add_metadata(self, docs, file):
+        last_modified = os.path.getmtime(file)
+        file_name = os.path.basename(file)
+        for doc in docs:
+            doc.metadata.update({
+                "source": file,
+                "file_name": file_name,
+                "last_modified": last_modified
+            })
 
     def _create_vector_db(self):
         raw_documents = self._load_documents()
@@ -87,7 +97,7 @@ class IndexerRetriever:
         print(f"Update complete. Added: {len(new_files)}, Modified: {len(modified_files)}, Deleted: {len(deleted_files)}")
 
     def retrieve(self, query, k=5):
-        self.update_vector_db()
+        # self.update_vector_db()
         docs = self.vector_db.similarity_search(query, k=k)
         return [doc.page_content for doc in docs]
 
