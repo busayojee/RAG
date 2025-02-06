@@ -64,6 +64,6 @@ streamlit run main.py
 
 ## Contributing
 
-Contributions are welcome! If you'd like to improve the game.
+Contributions are welcome! If you'd like to improve the app.
 
 ---
