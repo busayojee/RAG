@@ -40,7 +40,6 @@ class Generator:
         try:
             response = ollama.chat(model=self.model, messages=[{"role": "user", "content": full_prompt}])
             raw = response["message"]["content"].strip()
-            print(raw)
             return self._extract_answer(raw)
 
         except Exception as e:
